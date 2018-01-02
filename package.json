@@ -1,0 +1,10 @@
+{
+  "name": "borz-caches",
+  "version": "0.1.0",
+  "description": "Caches module",
+  "main": "index.js",
+  "scripts": {
+  },
+  "author": "satuevsky",
+  "license": "ISC"
+}
