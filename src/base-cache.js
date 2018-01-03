@@ -4,15 +4,15 @@
 
 module.exports = class BaseCache{
 	get(key, cb){
-		cb && cb();
+		cb && cb(new Error("Method 'get' is not implemented"));
 	}
 	set(key, value, cb){
-		cb && cb();
+		cb && cb(new Error("Method 'set' is not implemented"));
 	}
 	rem(key, cb){
-		cb && cb();
+		cb && cb(new Error("Method 'rem' is not implemented"));
 	}
 	inc(key, val, cb){
-		cb && cb();
+		cb && cb(new Error("Method 'inc' is not implemented"));
 	}
 };
