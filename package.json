@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "description": "Caches module",
   "main": "index.js",
-  "scripts": {
-  },
+  "scripts": {},
   "author": "satuevsky",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "mocha": "^4.1.0"
+  }
 }
