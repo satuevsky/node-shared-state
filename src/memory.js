@@ -29,13 +29,12 @@ class MemoryCache extends BaseCache{
 	}
 
 	set(key, value, callback){
-		this.valuesMap(key, value);
+		this.valuesMap.set(key, value);
 		callback && callback();
 	}
 
 	get(key, callback){
-		let elem = this.valuesMap.get(key);
-		callback && callback(null, elem && elem.v);
+		callback && callback(null, this.valuesMap.get(key));
 	}
 
 	rem(key, callback){
@@ -54,6 +53,10 @@ class MemoryCache extends BaseCache{
         }
         callback && callback(null, newVal);
 	}
+
+	size(callback){
+	    callback && callback(null, this.valuesMap.size);
+    }
 }
 
 module.exports = MemoryCache;

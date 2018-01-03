@@ -15,4 +15,8 @@ module.exports = class BaseCache{
 	inc(key, val, cb){
 		cb && cb(new Error("Method 'inc' is not implemented"));
 	}
+
+	size(cb){
+	    cb && cb(new Error("Method 'size' is not implemented"))
+    }
 };
