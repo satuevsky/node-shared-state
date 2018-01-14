@@ -1,9 +1,14 @@
 class OrderedMap extends Map {
-    constructor({capacity} = {}) {
+    constructor({capacity, expire} = {}) {
         super();
         this.capacity = capacity;
+        this.expire = expire;
         this._first = null; //first element
         this._last = null;  //last element
+
+        if(expire){
+            runAutoremover(this);
+        }
     }
 
     set(key, value) {
@@ -12,6 +17,7 @@ class OrderedMap extends Map {
                 key, value,
                 next: this._first,
                 prev: null,
+                time: Date.now()
             };
 
             if (!super.size) {
@@ -77,6 +83,17 @@ class OrderedMap extends Map {
     }
 }
 
+function runAutoremover(map){
+    setTimeout(check, map.expire);
+    function check(){
+        if(map._last && Date.now() - map._last.time > map.expire){
+            map.delete(map._last.key);
+        }
+        let timeout = map._last ? Date.now() - map._last.time : map.expire;
+        setTimeout(check, timeout);
+    }
+}
+
 
 function moveToTop(self, elem) {
     if (elem !== self._first) {
@@ -92,6 +109,7 @@ function moveToTop(self, elem) {
         elem.next.prev = elem;
         self._first = elem;
     }
+    elem.time = Date.now();
 }
 
 module.exports = OrderedMap;
