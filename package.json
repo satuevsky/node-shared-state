@@ -1,12 +1,15 @@
 {
-  "name": "borz-caches",
+  "name": "node-shared-state",
   "version": "0.1.0",
-  "description": "Caches module",
+  "description": "Share state between Node applications",
   "main": "index.js",
   "scripts": {},
   "author": "satuevsky",
   "license": "ISC",
   "devDependencies": {
     "mocha": "^4.1.0"
+  },
+  "dependencies": {
+    "redis": "^2.8.0"
   }
 }
