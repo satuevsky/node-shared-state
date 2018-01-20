@@ -1,7 +1,7 @@
 {
   "name": "node-shared-state",
-  "version": "0.1.0",
-  "description": "Share state between Node applications",
+  "version": "0.0.1",
+  "description": "Share state between Node processes",
   "main": "index.js",
   "scripts": {},
   "author": "satuevsky",
