@@ -1,11 +1,15 @@
 {
   "name": "node-shared-state",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Share state between Node processes",
   "main": "index.js",
   "scripts": {},
   "author": "satuevsky",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/satuevsky/node-shared-state.git"
+  },
   "devDependencies": {
     "mocha": "^4.1.0"
   },
