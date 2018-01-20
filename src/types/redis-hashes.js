@@ -1,45 +1,48 @@
+let {castHash, castValue} = require('./redis-utils');
+
 class RedisHashes{
     /**
+     * @param prefix
      * @param {number} [expire] - timeout in ms for auto removing hashes
+     * @param state
+     * @param {object} [propTypes]
      */
-    // constructor({expire, owner}){
-    //     this.map = !expire ? new Map() : new OrderedMap({expire});
-    // }
-    //
-    // set(key, hash, callback){
-    //     this.map.set(key, hash);
-    //     callback && callback();
-    // }
-    //
-    // setProp(key, propName, value, callback){
-    //     let hash = this.map.get(key);
-    //     if(!hash){
-    //         hash = {};
-    //         this.map.set(key, hash);
-    //     }
-    //     hash[propName] = value;
-    //     callback && callback();
-    // }
-    //
-    // get(key, callback){
-    //     callback && callback(null, this.map.get(key));
-    // }
-    //
-    // getProp(key, propName, callback){
-    //     let hash = this.map.get(key);
-    //     callback && callback(null, hash && hash[propName]);
-    // }
-    //
-    // del(key, callback){
-    //     let exist = this.map.delete(key);
-    //     callback && callback(null, exist);
-    // }
-    //
-    // delProp(key, propName, callback){
-    //     let hash = this.map.get(key);
-    //     delete hash[propName];
-    //     callback && callback();
-    // }
+    constructor({prefix, state, expire, propTypes = {}}){
+        this.client = state.redisClient;
+        this.propTypes = {
+            types: propTypes,
+            propNames: Object.keys(propTypes)
+        };
+        this.prefix = prefix;
+    }
+
+    set(key, hash, callback){
+        this.client.hmset(this.prefix + ":" + key,  hash, callback);
+    }
+
+    setProp(key, propName, value, callback){
+        this.client.hset(this.prefix + ":" + key, propName, value, callback);
+    }
+
+    get(key, callback){
+        this.client.hgetall(this.prefix + ":" + key, (err, hash) => {
+            callback(err, hash && castHash(hash, this.propTypes));
+        });
+    }
+
+    getProp(key, propName, callback){
+        this.client.hget(this.prefix + ":" + key, propName, (err, val) => {
+            callback && callback(err, castValue(val, this.propTypes.types[propName]));
+        });
+    }
+
+    del(key, callback){
+        this.client.del(this.prefix + ":" + key, callback);
+    }
+
+    delProp(key, propName, callback){
+        this.client.hdel(this.prefix + ":" + key, propName, callback);
+    }
 }
 
 module.exports = RedisHashes;
