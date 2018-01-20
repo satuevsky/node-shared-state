@@ -39,7 +39,7 @@ class BaseState {
      * @param {object} [propTypes]
      * @param [...params]
      */
-    Hases({prefix, propTypes, ...params}){
+    Hashes({prefix, propTypes, ...params}){
         return getStore(this, 'Hashes', prefix, 'H', {propTypes, ...params});
     }
 }

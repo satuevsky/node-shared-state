@@ -1,6 +1,6 @@
 {
   "name": "node-shared-state",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Share state between Node processes",
   "main": "index.js",
   "scripts": {},
