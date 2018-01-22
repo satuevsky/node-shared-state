@@ -8,18 +8,32 @@ class RedisKeys{
      * @param valuesType
      */
     constructor({prefix, state, expire}){
-        this.client = state.redisClient;
         this.prefix = prefix;
+        this.expire = expire;
+        this.client = state.redisClient;
     }
 
     set(key, value, callback){
-        this.client.set(this.prefix + ":" + key, stringify(value), callback);
+        key = this.prefix + ":" + key;
+        value = stringify(value);
+
+        if(!this.expire){
+            this.client.set(key, value, callback);
+        }else{
+            this.client.set(key, value, 'PX', this.expire, callback);
+        }
     }
 
     get(key, callback){
-        this.client.get(this.prefix + ":" + key, (err, val) => {
-            callback && callback(err, parse(val));
+        let executor = this.expire ? this.client.multi() : this.client;
+        key = this.prefix + ":" + key;
+        executor.get(key, (err, val) => {
+            callback && callback(err, !err && parse(val));
         });
+        if(this.expire){
+            executor.pexpire(key, this.expire);
+            executor.exec();
+        }
     }
 
     del(key, callback){
