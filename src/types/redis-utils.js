@@ -18,7 +18,7 @@ function stringifyHash(hash) {
 }
 
 function parse(string){
-    if(!string.length){
+    if(!string){
         return null;
     }else{
         return JSON.parse(string);
