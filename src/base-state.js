@@ -26,21 +26,21 @@ class BaseState {
     /**
      * Get instance for storing key-value pairs.
      * @param {string} [prefix] - prefix for Keys instance.
-     * @param [valuesType]
+     * @param [expire]
      * @param [...params]
      */
-    Keys({prefix, valuesType, ...params}){
-        return getStore(this, 'Keys', prefix, 'K', {valuesType, ...params});
+    Keys({prefix, expire, ...params}){
+        return getStore(this, 'Keys', prefix, 'K', {expire, ...params});
     }
 
     /**
      * Get instance for storing key-value pairs.
      * @param {string} [prefix]
-     * @param {object} [propTypes]
+     * @param [expire]
      * @param [...params]
      */
-    Hashes({prefix, propTypes, ...params}){
-        return getStore(this, 'Hashes', prefix, 'H', {propTypes, ...params});
+    Hashes({prefix, expire, ...params}){
+        return getStore(this, 'Hashes', prefix, 'H', {expire, ...params});
     }
 }
 

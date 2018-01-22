@@ -1,38 +1,33 @@
-let {castHash, castValue} = require('./redis-utils');
+let {parse, stringify, parseHash, stringifyHash} = require('./redis-utils');
 
 class RedisHashes{
     /**
      * @param prefix
      * @param {number} [expire] - timeout in ms for auto removing hashes
      * @param state
-     * @param {object} [propTypes]
      */
-    constructor({prefix, state, expire, propTypes = {}}){
+    constructor({prefix, state, expire}){
         this.client = state.redisClient;
-        this.propTypes = {
-            types: propTypes,
-            propNames: Object.keys(propTypes)
-        };
         this.prefix = prefix;
     }
 
     set(key, hash, callback){
-        this.client.hmset(this.prefix + ":" + key,  hash, callback);
+        this.client.hmset(this.prefix + ":" + key, stringifyHash(hash), callback);
     }
 
     setProp(key, propName, value, callback){
-        this.client.hset(this.prefix + ":" + key, propName, value, callback);
+        this.client.hset(this.prefix + ":" + key, propName, stringify(value), callback);
     }
 
     get(key, callback){
         this.client.hgetall(this.prefix + ":" + key, (err, hash) => {
-            callback(err, hash && castHash(hash, this.propTypes));
+            callback(err, hash && parseHash(hash));
         });
     }
 
     getProp(key, propName, callback){
-        this.client.hget(this.prefix + ":" + key, propName, (err, val) => {
-            callback && callback(err, castValue(val, this.propTypes.types[propName]));
+        this.client.hget(this.prefix + ":" + key, propName, (err, value) => {
+            callback && callback(err, !err && parse(value));
         });
     }
 

@@ -1,9 +1,8 @@
 {
   "name": "node-shared-state",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Share state between Node processes",
   "main": "index.js",
-  "scripts": {},
   "author": "satuevsky",
   "license": "ISC",
   "repository": {

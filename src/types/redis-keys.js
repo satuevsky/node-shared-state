@@ -1,4 +1,4 @@
-let {castValue} = require('./redis-utils');
+let {parse, stringify} = require('./redis-utils');
 
 class RedisKeys{
     /**
@@ -7,19 +7,18 @@ class RedisKeys{
      * @param {number} [expire] - timeout in ms for auto removing keys
      * @param valuesType
      */
-    constructor({prefix, state, expire, valuesType}){
+    constructor({prefix, state, expire}){
         this.client = state.redisClient;
-        this.valuesType = valuesType;
         this.prefix = prefix;
     }
 
     set(key, value, callback){
-        this.client.set(this.prefix + ":" + key, value, callback);
+        this.client.set(this.prefix + ":" + key, stringify(value), callback);
     }
 
     get(key, callback){
         this.client.get(this.prefix + ":" + key, (err, val) => {
-            callback && callback(err, castValue(val, this.valuesType));
+            callback && callback(err, parse(val));
         });
     }
 

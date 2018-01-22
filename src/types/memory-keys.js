@@ -5,8 +5,7 @@ class MemoryKeys{
      * @param {number} [expire] - timeout in ms for auto removing keys
      * @param [valuesType] - values type, uses on get values.
      */
-    constructor({expire, valuesType}){
-        this.valuesType = valuesType || String;
+    constructor({expire}){
         this.map = !expire ? new Map() : new OrderedMap({expire});
     }
 
@@ -16,28 +15,12 @@ class MemoryKeys{
     }
 
     get(key, callback){
-        let value = this.map.get(key);
-        callback && callback(null, castValue(value, this.valuesType));
+        callback && callback(null, this.map.get(key));
     }
 
     del(key, callback){
         let exist = this.map.delete(key);
         callback && callback(null, exist);
-    }
-}
-
-function castValue(value, type){
-    if(value === undefined){
-        return value;
-    }
-
-    switch (type){
-        case Number:
-            return Number(value);
-        case Boolean:
-            return !!value;
-        case String:
-            return String(value);
     }
 }
 

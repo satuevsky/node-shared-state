@@ -1,31 +1,44 @@
-function castValue(value, type){
-    if(value === undefined || type === undefined){
-        return value;
-    }
-
-    switch (type){
-        case String:
-            return value;
-        case Number:
-            return Number(value);
-        case Boolean:
-            return !(!value || value === "0" || value === "false");
-        default:
-            return value;
+function stringify(value){
+    if(value == null){
+        return "";
+    }else{
+        return JSON.stringify(value);
     }
 }
 
-function castHash(hash, props){
-    if(hash && props.propNames.length){
-        let i = 0;
-        for(; i < props.propNames.length; i++){
-            let propName = props.propNames[i];
-            if(Object.prototype.hasOwnProperty.call(hash, propName)){
-                hash[propName] = castValue(hash[propName], props.types[propName]);
-            }
-        }
+function stringifyHash(hash) {
+    let result = Object.create(null),
+        propName;
+
+    for(propName in hash){
+        result[propName] = stringify(hash[propName]);
     }
-    return hash;
+
+    return result;
 }
 
-module.exports = { castValue, castHash };
+function parse(string){
+    if(!string.length){
+        return null;
+    }else{
+        return JSON.parse(string);
+    }
+}
+
+function parseHash(hash) {
+    let result = {},
+        propName;
+
+    for(propName in hash){
+        result[propName] = parse(hash[propName]);
+    }
+
+    return result;
+}
+
+module.exports = {
+    parse,
+    stringify,
+    parseHash,
+    stringifyHash
+};
