@@ -7,36 +7,71 @@ class RedisHashes{
      * @param state
      */
     constructor({prefix, state, expire}){
-        this.client = state.redisClient;
         this.prefix = prefix;
+        this.expire = expire;
+        this.client = state.redisClient;
     }
 
-    set(key, hash, callback){
-        this.client.hmset(this.prefix + ":" + key, stringifyHash(hash), callback);
+    set(key, hash, cb){
+        key = this.prefix + ":" + key;
+        hash = stringifyHash(hash);
+
+        if(!this.expire){
+            this.client.hmset(key, hash, cb);
+        }else{
+            this.client.multi()
+                .hmset(key, hash, cb)
+                .pexpire(key, this.expire)
+                .exec();
+        }
     }
 
-    setProp(key, propName, value, callback){
-        this.client.hset(this.prefix + ":" + key, propName, stringify(value), callback);
+    setProp(key, propName, value, cb){
+        key = this.prefix + ":" + key;
+        value = stringify(value);
+
+        if(!this.expire){
+            this.client.hset(key, propName, value, cb);
+        }else{
+            this.client.multi()
+                .hset(key, propName, value, cb)
+                .pexpire(key, this.expire)
+                .exec();
+        }
     }
 
-    get(key, callback){
-        this.client.hgetall(this.prefix + ":" + key, (err, hash) => {
-            callback(err, hash && parseHash(hash));
+    get(key, cb){
+        key = this.prefix + ":" + key;
+
+        let executor = this.expire ? this.client.multi() : this.client;
+        executor.hgetall(key, (err, hash) => {
+            cb && cb(err, hash && parseHash(hash));
         });
+        if(this.expire){
+            executor.pexpire(key, this.expire);
+            executor.exec();
+        }
     }
 
-    getProp(key, propName, callback){
-        this.client.hget(this.prefix + ":" + key, propName, (err, value) => {
-            callback && callback(err, !err && parse(value));
+    getProp(key, propName, cb){
+        key = this.prefix + ":" + key;
+
+        let executor = this.expire ? this.client.multi() : this.client;
+        executor.hget(key, propName, (err, value) => {
+            cb && cb(err, !err && parse(value));
         });
+        if(this.expire){
+            executor.pexpire(key, this.expire);
+            executor.exec();
+        }
     }
 
-    del(key, callback){
-        this.client.del(this.prefix + ":" + key, callback);
+    del(key, cb){
+        this.client.del(this.prefix + ":" + key, cb);
     }
 
-    delProp(key, propName, callback){
-        this.client.hdel(this.prefix + ":" + key, propName, callback);
+    delProp(key, propName, cb){
+        this.client.hdel(this.prefix + ":" + key, propName, cb);
     }
 }
 
