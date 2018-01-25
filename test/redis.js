@@ -3,6 +3,8 @@ let assert = require('assert'),
 
 let state = new RedisState({prefix: "test"});
 
+
+
 describe("RedisState#Keys expire", () => {
     let expire = 100,
         keys = state.Keys({prefix: "hashes", expire});
@@ -124,5 +126,49 @@ describe("RedisState#Hashes expire", () => {
                 done();
             });
         }, 2*expire + 20);
+    });
+});
+
+describe("RedisState#Sets test", () => {
+    let sets = state.Sets({prefix: "sets"});
+
+    it("#add", (done) => {
+        sets.add("set1", "member1", (err, inserted) => {
+            assert.ifError(err);
+            assert.equal(typeof inserted, "number");
+            done();
+        });
+    });
+
+    it("#rem", (done) => {
+        sets.add("set2", "member1");
+        sets.rem("set2", "member1", (err, removed) => {
+            assert.ifError(err);
+            assert.equal(removed, 1);
+            done();
+        });
+    });
+
+    it("#members", (done) => {
+        sets.add("set3", "member1");
+        sets.add("set3", "member2");
+        sets.add("set3", "member3");
+
+        sets.members("set3", (err, members) => {
+            assert.ifError(err);
+            assert.deepEqual(members, ["member1", "member2", "member3"].reverse());
+            done();
+        });
+    });
+
+    it("#card", (done) => {
+        sets.add("set4", "member1");
+        sets.add("set4", "member2");
+
+        sets.card("set4", (err, size) => {
+            assert.ifError(err);
+            assert.equal(size, 2);
+            done();
+        });
     });
 });

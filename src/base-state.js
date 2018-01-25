@@ -34,13 +34,23 @@ class BaseState {
     }
 
     /**
-     * Get instance for storing key-value pairs.
+     * Get instance for storing hashes.
      * @param {string} [prefix]
      * @param [expire]
      * @param [...params]
      */
     Hashes({prefix, expire, ...params}){
         return getStore(this, 'Hashes', prefix, 'H', {expire, ...params});
+    }
+
+    /**
+     * Get instance for storing sets
+     * @param prefix
+     * @param params
+     * @constructor
+     */
+    Sets({prefix, params}){
+        return getStore(this, 'Sets', prefix, 'S', params)
     }
 }
 
