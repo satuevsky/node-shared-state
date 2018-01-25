@@ -3,7 +3,6 @@ let OrderedMap = require('../lib/ordered-map');
 class MemoryKeys{
     /**
      * @param {number} [expire] - timeout in ms for auto removing keys
-     * @param [valuesType] - values type, uses on get values.
      */
     constructor({expire}){
         this.map = !expire ? new Map() : new OrderedMap({expire});
