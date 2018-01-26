@@ -3,8 +3,8 @@ class OrderedMap extends Map {
         super();
         this.capacity = capacity;
         this.expire = expire;
-        this._first = null; //first element
-        this._last = null;  //last element
+        this.head = null;   //first element
+        this.tail = null;   //last element
 
         if(expire){
             runAutoremover(this);
@@ -14,27 +14,28 @@ class OrderedMap extends Map {
     set(key, value) {
         if (!super.has(key)) {    //if has not key then add new element to top
             let elem = {
-                key, value,
-                next: this._first,
+                key,
+                value,
+                next: this.head,
                 prev: null,
                 time: Date.now()
             };
 
             if (!super.size) {
                 //if map is empty then this new element should be last too
-                this._last = elem;
+                this.tail = elem;
             } else {
                 //else set this element as previous for current first element
-                this._first.prev = elem;
+                this.head.prev = elem;
             }
 
             //set new element as first
-            this._first = elem;
+            this.head = elem;
             super.set(key, elem);
 
             //remove last element if capacity is overflow
             if(this.capacity && this.capacity < super.size){
-                this.delete(this._last.key);
+                this.delete(this.tail.key);
             }
         } else {
             let elem = super.get(key);
@@ -44,7 +45,7 @@ class OrderedMap extends Map {
         return this;
     }
 
-    get(key, callback) {
+    get(key) {
         let elem = super.get(key);
 
         if (elem) {
@@ -62,17 +63,16 @@ class OrderedMap extends Map {
             if (elem.next) {
                 elem.next.prev = elem.prev;
             } else {
-                this._last = elem.prev;
+                this.tail = elem.prev;
             }
 
             if (elem.prev) {
                 elem.prev.next = elem.next;
             } else {
-                this._firts = elem.next;
+                this.head = elem.next;
             }
+            return super.delete(elem.key);
         }
-
-        return super.delete(elem.key);
     }
 
     inc(key, value=1){
@@ -85,29 +85,34 @@ class OrderedMap extends Map {
 
 function runAutoremover(map){
     setTimeout(check, map.expire);
+
     function check(){
-        if(map._last && Date.now() - map._last.time > map.expire){
-            map.delete(map._last.key);
+        if(map.tail && Date.now() - map.tail.time >= map.expire){
+            map.delete(map.tail.key);
         }
-        let timeout = map._last ? Date.now() - map._last.time : map.expire;
+
+        let timeout =  map.expire;
+        if(map.tail){
+            timeout -= Date.now() - map.tail.time
+        }
         setTimeout(check, timeout);
     }
 }
 
 
 function moveToTop(self, elem) {
-    if (elem !== self._first) {
+    if (elem !== self.head) {
         if (elem.next) {
             elem.next.prev = elem.prev;
         } else {
-            self._last = elem.prev;
+            self.tail = elem.prev;
         }
 
         elem.prev.next = elem.next;
         elem.prev = null;
-        elem.next = self._first;
-        elem.next.prev = elem;
-        self._first = elem;
+        elem.next = self.head;
+        self.head.prev = elem;
+        self.head = elem;
     }
     elem.time = Date.now();
 }
