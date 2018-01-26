@@ -52,14 +52,10 @@ class MemorySets{
     members(key, cb){
         let set = this.setsMap.get(key),
             result = [];
-
         if(set){
-            set.forEach((member) => {
-                result.push(member);
-            });
+            set.forEach((member) => result.push(member));
         }
-
-        cb(null, result);
+        cb(null, result.reverse());
     }
 
     /**
