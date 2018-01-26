@@ -1,7 +1,6 @@
 const stateInstances = new Map();
 
 class BaseState {
-
     /**
      * BaseState's constructor.
      * @param {string} [prefix]
@@ -12,13 +11,13 @@ class BaseState {
      */
     constructor({prefix, types}){
         prefix = prefix || "@DEF_INSTANCE";
-        let instance = stateInstances.get(prefix);
+        let instance = stateInstances.get(this.constructor.name + ':' + prefix);
         if(!instance){
             instance = this;
             instance.types = types;
             instance.prefix = prefix;
             instance.typeInstances = new Map();
-            stateInstances.set(prefix, instance);
+            stateInstances.set(this.constructor.name + ':' + prefix, instance);
         }
         return instance;
     }
